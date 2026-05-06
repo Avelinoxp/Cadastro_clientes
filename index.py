@@ -32,7 +32,7 @@ def cadastrar():
         entry_telefone.delet(0, END)
         entry_email.delet(0, END) 
         entry_cidade.delet(0, END)
-        messagebox.showinfo('Sucesso', 'Cliente Cadastrado')
+        messagebox.showinfo('Sucesso', 'Cliente Cadastrado!')
 
 
 ##Aba Cadastro
