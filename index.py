@@ -1,83 +1,76 @@
 from tkinter import *
-from tkinter import ttk
 from tkinter import messagebox
 
-#Janela principal
-janela = Tk()
-janela.title('Cadastro de cliente')
-janela.geometry('700x400')
+Cliente=Tk()
+Cliente.title('Solicitar Senha')
+Cliente.geometry('300x250')
+Cliente.configure(bg= 'PeachPuff2')
 
-####Notebook (abas)
-abas = ttk.Notebook(janela)
-abas.pack(fill='both', expand=True)
+#Variaveris compartilhadas
 
-#ABA1 - Cadastro
-aba1 = Frame(abas)
-abas.add(aba1, text='Cadastro')
-aba2 = Frame(abas)
-abas.add(aba2, text='Clientes Cadastrados')
+contador = 1
+fila = []
+senha_atual = StringVar()
+senha_atual.set('---')
 
-#Função Cadastrar
-def cadastrar():
-    nome =  entry_nome.get()
-    telefone = entry_telefone.get()
-    email = entry_email.get()
-    cidade =entry_cidade.get()
+#Tela2 Administrador
 
-    if nome == '' or telefone == '' or email == '' or cidade == '':
-        messagebox.showwarning('Erro', 'Preencha todos os campos!')
-    else:
-        tabela.insert('', END, values=(nome, telefone, email, cidade) )
-        entry_nome.delet(0, END)
-        entry_telefone.delet(0, END)
-        entry_email.delet(0, END)
-        entry_cidade.delet(0, END)
-        messagebox.showinfo('Sucesso', 'Cliente Cadastrado')
+admin = Toplevel(Cliente)
+admin.title('Administrador')
+admin.geometry('300x350')
+admin.configure(bg= 'PeachPuff2')
+
+#Lista da fila no administrador
+Label(admin, text='Fila de Senhas', font=('Arial', 14)).pack(pady=10)
 
 
-##Aba Cadastro
-Label(aba1, text='nome').pack (pady=5) 
-entry_nome = Entry(aba1, width=40)
-entry_nome.pack()
+lista_admin = Listbox(admin, width=20, height=10)
+lista_admin.pack(pady=10)
 
-Label(aba1, text='telefone').pack (pady=5) 
-entry_telefone = Entry(aba1, width=40)
-entry_telefone.pack()
+#Tla 3 (Painel)
+painel = Toplevel(Cliente)
+painel.title('Painel de Senhas')
+painel.geometry('400x300')
+painel.configure(bg= 'PeachPuff2')
+Label(painel, text='Senha Atual', font=('Arial', 14)).pack(pady=10)
 
-
-Label(aba1, text='Email').pack (pady=5) 
-entry_email = Entry(aba1, width=40)
-entry_email.pack()
-
-
-Label(aba1, text='Cidade').pack (pady=5) 
-entry_cidade = Entry(aba1, width=40)
-entry_cidade.pack()
-
-Button(
-    aba1,
-    text='Cadastrar',
-    bg='red',
-    fg='white',
-    width=20,
-    command=cadastrar
+Label(
+    painel, textvariable=senha_atual,
+    font=('Arial', 40),
+    fg='red'
 ).pack(pady=20)
 
-###aba tabela
-colunas = ('Nome', 'Telefone', 'Email', 'Cidade')
+#Função
+def chamar_senha():
+        if len(fila) == 0:
+            messagebox.showinfo('Fila Vazia', 'Não há mais senhas na fila.')
+        else:
+            senha = fila.pop(0)
+            lista_admin.delete(0)
+            senha_atual.set(senha)
+def solicitar_senha():
+    global contador
+    senha = f'A{contador: 03}'
+    fila.append(senha)
 
-tabela=ttk.Treeview(
-    aba2,
-    columns=colunas,
-    show= 'headings'
-)
+    lista_admin.insert(END, senha)
+    messagebox.showinfo('Senha Gerada', f'Sua senha é: {senha}')
+    contador += 1
 
-tabela.pack(fill="both", expand=True, pady=20)
+#INTERFACE - Cliente
+Label(Cliente, text='Retirar Senha', font=('Arial', 16)).pack(pady=20)
 
-for col in colunas:
-    tabela.heading(col, text=col)
-    tabela.column(col, width=150)
+Button(
+    Cliente,
+    text='Gerar Senha',
+    width=20,
+    command=solicitar_senha
+).pack(pady=10)
+Button(
+    admin,
+    text='Chamar Senha',
+    width=20,
+    command=chamar_senha
+).pack(pady=10)
 
-
-
-janela.mainloop()
+Cliente.mainloop()
